@@ -4,6 +4,7 @@ import BaseRepository from '../repository/BaseRepository.js';
 
 const router = Router();
 
+//busca todos usuarios
 router.get("/", async (req, res) => {
   console.log("Recebida requisição para /users");
   try {
@@ -15,6 +16,12 @@ router.get("/", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
-
+//busca pelo id
+router.get('/:id', async (req, res) => {
+  const {id} = req.params;
+  const result = await new BaseRepository().getById('users', id);
+  console.log(result);
+  res.status(200).send(result);
+})
 
 export default router;

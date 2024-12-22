@@ -11,6 +11,17 @@ class BaseRepository {
       throw error;
     }
   }
+  async getById(table, id) {
+    try {
+      const queryText = `SELECT * FROM ${table} WHERE ID = $1`;
+      const result = (await pool.query(queryText, [id])).rows[0];
+      return result;
+      
+    } catch (error) {
+      
+    }
+  }
+
 }
 
 export default BaseRepository;
