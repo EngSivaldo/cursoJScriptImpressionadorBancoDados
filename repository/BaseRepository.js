@@ -1,3 +1,4 @@
+import { Client } from "pg";
 import pool from "./db.js";
 
 class BaseRepository {
@@ -22,6 +23,37 @@ class BaseRepository {
       throw error;
     }
   }
+
+  async  insertOne(table, columnsArray, valueArray) {
+    // Conecta ao cliente do pool de conexões
+    const client = await pool.connect();
+    try {
+      // Cria um array de placeholders ($1, $2, etc.) para os valores
+      let flagsStringArray = Array.from((new Array(columnsArray.length)).keys()).map((el) => `$${el + 1}`);
+      
+      // Cria a string da consulta SQL para inserção
+      const queryText = `INSERT INTO ${table} (${columnsArray.join()}) VALUES (${flagsStringArray.join()})`;
+  
+      // Inicia uma transação
+      await client.query('BEGIN TRANSACTION');
+      
+      // Executa a consulta de inserção com os valores fornecidos
+      await client.query(queryText, valueArray);
+      
+      // Confirma a transação
+      await client.query('COMMIT');
+    
+    } catch (error) {
+      // Em caso de erro, reverte a transação
+      await client.query('ROLLBACK');
+      throw error;
+    } finally {
+      // Libera o cliente de volta ao pool de conexões
+      client.release();
+    }
+  }
+
+
 }
 
 export default BaseRepository;
