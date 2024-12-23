@@ -1,29 +1,27 @@
-import pool from "./db.js"; // Importa a conexão com o banco de dados
+import pool from "./db.js";
 
 class BaseRepository {
-  // Método para obter todos os registros de uma tabela
-  async getAll(table) {
+  async getAll(table, colunmsArray) {
     try {
-      const results = (await pool.query(`SELECT * FROM ${table}`)).rows; // Executa a consulta SQL para obter todos os registros da tabela
-      console.log("Resultados da consulta ao banco de dados:", results); // Loga os resultados no console
-      return results; // Retorna os resultados
+      const results = (await pool.query(`SELECT ${colunmsArray.join()} FROM ${table}`)).rows;
+      console.log("Resultados da consulta ao banco de dados:", results);
+      return results;
     } catch (error) {
-      console.error("Erro ao consultar o banco de dados:", error); // Loga o erro no console
-      throw error; // Lança o erro para ser tratado externamente
+      console.error("Erro ao consultar o banco de dados:", error);
+      throw error;
     }
   }
 
-  // Método para obter um registro pelo ID
-  async getById(table, id) {
+  async getById(table,colunmsArray, id) {
     try {
-      const queryText = `SELECT * FROM ${table} WHERE ID = $1`; // Define a consulta SQL com um parâmetro para o ID
-      const result = (await pool.query(queryText, [id])).rows[0]; // Executa a consulta passando o ID como parâmetro
-      return result; // Retorna o resultado
+      const queryText = `SELECT ${colunmsArray.join()} FROM ${table} WHERE ID = $1`;
+      const result = (await pool.query(queryText, [id])).rows[0];
+      return result;
     } catch (error) {
-      console.error("Erro ao consultar o banco de dados:", error); // Loga o erro no console
-      throw error; // Lança o erro para ser tratado externamente
+      console.error("Erro ao consultar o banco de dados:", error);
+      throw error;
     }
   }
 }
 
-export default BaseRepository; // Exporta a classe BaseRepository
+export default BaseRepository;
