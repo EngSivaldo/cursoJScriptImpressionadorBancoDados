@@ -30,4 +30,21 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+router.post('/', async (req, res) => {
+  const { body } = req;
+  const columnsArray = ['name', 'surname', 'email'];
+  const valuesArray = columnsArray.reduce((acc, columnName) => {
+    acc.push(body[columnName]);
+    return acc;
+  }, []);
+
+  try {
+    await new UserRepository().insertOne(valuesArray);
+    res.status(200).send({ message: 'Dados enviados com sucesso!' });
+  } catch (error) {
+    console.error('Erro ao enviar dados:', error);
+    res.status(500).send({ message: 'Erro ao enviar dados para o banco de dados.' });
+  }
+});
+
 export default router;

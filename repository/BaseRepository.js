@@ -1,4 +1,5 @@
-import { Client } from "pg";
+import pkg from 'pg';
+const { Client } = pkg;
 import pool from "./db.js";
 
 class BaseRepository {
